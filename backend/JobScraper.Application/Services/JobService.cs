@@ -1,3 +1,5 @@
+using JobScraper.Application.DTOs;
+using JobScraper.Application.Exceptions;
 using JobScraper.Application.Interfaces;
 using JobScraper.Application.Models;
 
@@ -17,11 +19,27 @@ public class JobService : IJobService
         return _jobPostingRepository.GetAllAsync(cancellationToken);
     }
 
-    public Task AddJobAsync(JobPosting jobPosting, CancellationToken cancellationToken)
+    public async Task<JobPosting> AddJobAsync(CreateJobPostingRequest request, CancellationToken cancellationToken)
     {
-        jobPosting.Id = Guid.NewGuid();
-        jobPosting.ScrapedAt = DateTime.UtcNow;
+        var exists = await _jobPostingRepository.ExistsByUrlAsync(request.Url, cancellationToken);
 
-        return _jobPostingRepository.AddAsync(jobPosting, cancellationToken);
+        if(exists)
+        {
+            throw new DuplicateJobPostingsException(request.Url);
+        }
+
+        var jobPosting = new JobPosting
+        {
+            Id = Guid.NewGuid(),
+            Source = request.Source,
+            Company = request.Company, 
+            Title = request.Title, 
+            Url = request.Url,
+            ScrapedAt = DateTime.UtcNow
+        };
+
+        await _jobPostingRepository.AddAsync(jobPosting, cancellationToken);
+        
+        return jobPosting;
     }
 }

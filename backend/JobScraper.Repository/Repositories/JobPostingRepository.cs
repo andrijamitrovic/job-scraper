@@ -21,6 +21,12 @@ public class JobPostingRepository : IJobPostingRepository
             .ToListAsync(cancellationToken);
     }
 
+    public Task<bool> ExistsByUrlAsync(string url, CancellationToken cancellationToken)
+    {
+        return _dbContext.JobPostings
+            .AnyAsync(jobPosting => jobPosting.Url == url, cancellationToken);
+    }
+
     public async Task AddAsync(JobPosting jobPosting, CancellationToken cancellationToken)
     {
         _dbContext.JobPostings.Add(jobPosting);

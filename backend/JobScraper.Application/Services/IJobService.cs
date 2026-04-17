@@ -1,3 +1,4 @@
+using JobScraper.Application.DTOs;
 using JobScraper.Application.Models;
 
 namespace JobScraper.Application.Services;
@@ -6,5 +7,5 @@ public interface IJobService
 {
     Task<IReadOnlyList<JobPosting>> GetJobsAsync(CancellationToken cancellationToken);
 
-    Task AddJobAsync(JobPosting jobPosting, CancellationToken cancellationToken);
+    Task<JobPosting> AddJobAsync(CreateJobPostingRequest request, CancellationToken cancellationToken);
 }

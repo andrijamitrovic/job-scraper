@@ -1,3 +1,5 @@
+using JobScraper.Application.DTOs;
+using JobScraper.Application.Exceptions;
 using JobScraper.Application.Models;
 using JobScraper.Application.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -24,10 +26,21 @@ public class JobsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<JobPosting>> AddJob(JobPosting jobPosting, CancellationToken cancellationToken)
+    public async Task<ActionResult<JobPosting>> AddJob(CreateJobPostingRequest request, CancellationToken cancellationToken)
     {
-        await _jobService.AddJobAsync(jobPosting, cancellationToken);
+        try
+        {
+            var jobPosting = await _jobService.AddJobAsync(request, cancellationToken);
 
-        return Created(jobPosting.Url, jobPosting);
+            return Created(jobPosting.Url, jobPosting);
+        }
+        catch (DuplicateJobPostingsException exception)
+        {
+            return Conflict(new
+            {
+                message = exception.Message,
+                url = exception.Url
+            });
+        }
     }
 }
