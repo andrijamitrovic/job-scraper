@@ -32,14 +32,33 @@ public class JobsController : ControllerBase
         {
             var jobPosting = await _jobService.AddJobAsync(request, cancellationToken);
 
-            return Created(jobPosting.Url, jobPosting);
+            return CreatedAtAction(nameof(GetJob), new { id = jobPosting.Id }, jobPosting);
         }
-        catch (DuplicateJobPostingsException exception)
+        catch (DuplicateJobPostingException exception)
         {
             return Conflict(new
             {
                 message = exception.Message,
                 url = exception.Url
+            });
+        }
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<JobPosting>> GetJob(Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var job = await _jobService.GetJobAsync(id, cancellationToken);
+
+            return Ok(job);
+        }
+        catch (JobNotFoundException exception)
+        {
+            return NotFound(new
+            {
+                message = exception.Message,
+                id = exception.Id
             });
         }
     }

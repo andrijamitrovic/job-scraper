@@ -21,9 +21,9 @@ public class JobPostingRepository : IJobPostingRepository
             .ToListAsync(cancellationToken);
     }
 
-    public Task<bool> ExistsByUrlAsync(string url, CancellationToken cancellationToken)
+    public async Task<bool> ExistsByUrlAsync(string url, CancellationToken cancellationToken)
     {
-        return _dbContext.JobPostings
+        return await _dbContext.JobPostings
             .AnyAsync(jobPosting => jobPosting.Url == url, cancellationToken);
     }
 
@@ -32,5 +32,10 @@ public class JobPostingRepository : IJobPostingRepository
         _dbContext.JobPostings.Add(jobPosting);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<JobPosting?> GetJobAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return await _dbContext.JobPostings.FirstOrDefaultAsync(jobPosting => jobPosting.Id == id, cancellationToken);
     }
 }

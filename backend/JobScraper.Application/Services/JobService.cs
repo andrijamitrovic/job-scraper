@@ -25,7 +25,7 @@ public class JobService : IJobService
 
         if(exists)
         {
-            throw new DuplicateJobPostingsException(request.Url);
+            throw new DuplicateJobPostingException(request.Url);
         }
 
         var jobPosting = new JobPosting
@@ -41,5 +41,19 @@ public class JobService : IJobService
         await _jobPostingRepository.AddAsync(jobPosting, cancellationToken);
         
         return jobPosting;
+    }
+
+    public async Task<JobPosting> GetJobAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var job = await _jobPostingRepository.GetJobAsync(id, cancellationToken);
+
+        if(job == null)
+        {
+            throw new JobNotFoundException(id);
+        }
+        else
+        {
+            return job;
+        }
     }
 }
