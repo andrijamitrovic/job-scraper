@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\JobScraper.Application\JobScraper.Application.csproj" />
     <ProjectReference Include="..\JobScraper.Repository\JobScraper.Repository.csproj" />
+    <ProjectReference Include="..\JobScraper.Scrapers\JobScraper.Scrapers.csproj" />
   </ItemGroup>
 
 </Project>
