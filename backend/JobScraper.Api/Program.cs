@@ -1,3 +1,5 @@
+using JobScraper.Application.Interfaces;
+using JobScraper.Application.Scrapers;
 using JobScraper.Application.Services;
 using JobScraper.Repository;
 
@@ -8,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IJobService, JobService>();
+builder.Services.AddScoped<IJobSourceScraper, FakeJobSourceScraper>();
+builder.Services.AddScoped<IJobImportService, JobImportService>();
 builder.Services.AddRepositoryLayer(builder.Configuration);
 
 var app = builder.Build();
