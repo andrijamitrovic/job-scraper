@@ -28,6 +28,59 @@ The project uses a .NET backend, a React frontend, and Docker for easier local r
 - Display saved jobs in a simple React frontend
 - Mark newly imported jobs after running an import
 
+## Screenshot
+
+<img src="docs/images/job-scraper-home.png" alt="JobScraper job list" width="700">
+
+## Project Structure
+
+The project is split into a backend and frontend.
+
+- `backend/` contains the .NET solution.
+- `JobScraper.Api/` exposes the HTTP API used by the frontend.
+- `JobScraper.Application/` contains the application services and shared interfaces.
+- `JobScraper.Repository/` contains the database context, migrations, and repository code.
+- `JobScraper.Scrapers/` contains the individual job source scrapers.
+- `frontend/` contains the Vite React app.
+- `docker-compose.yml` runs the backend and frontend together with Docker.
+
+```txt
+job-scraper/
+|-- README.md
+|-- docker-compose.yml
+|-- backend/
+|   |-- Dockerfile
+|   |-- .dockerignore
+|   |-- job-scraper.sln
+|   |-- JobScraper.Api/
+|   |   |-- Controllers/
+|   |   |-- Program.cs
+|   |   |-- appsettings.json
+|   |   `-- appsettings.Development.json
+|   |-- JobScraper.Application/
+|   |   |-- Interfaces/
+|   |   |-- Models/
+|   |   |-- Requests/
+|   |   `-- Services/
+|   |-- JobScraper.Repository/
+|   |   |-- Data/
+|   |   |-- Migrations/
+|   |   `-- Repositories/
+|   `-- JobScraper.Scrapers/
+|       |-- HelloWorld/
+|       |-- Infostud/
+|       `-- Joberty/
+`-- frontend/
+    |-- Dockerfile
+    |-- .dockerignore
+    |-- package.json
+    |-- vite.config.js
+    |-- index.html
+    `-- src/
+        |-- App.jsx
+        `-- index.css
+```
+
 ## Running With Docker
 
 From the project root, run:
@@ -76,54 +129,6 @@ http://localhost:5173
 Open the frontend in your browser and click **Import jobs**.
 
 The backend will scrape the supported sources, save new jobs, skip duplicates, and return an import summary. The jobs list will then refresh and show the saved jobs.
-
-## Project Structure
-
-The project is split into a backend and frontend.
-
-- `backend/` contains the .NET solution.
-- `JobScraper.Api/` exposes the HTTP API used by the frontend.
-- `JobScraper.Application/` contains the application services and shared interfaces.
-- `JobScraper.Repository/` contains the database context, migrations, and repository code.
-- `JobScraper.Scrapers/` contains the individual job source scrapers.
-- `frontend/` contains the Vite React app.
-- `docker-compose.yml` runs the backend and frontend together with Docker.
-
-job-scraper/
-├── README.md
-├── docker-compose.yml
-├── backend/
-│   ├── Dockerfile
-│   ├── .dockerignore
-│   ├── job-scraper.sln
-│   ├── JobScraper.Api/
-│   │   ├── Controllers/
-│   │   ├── Program.cs
-│   │   ├── appsettings.json
-│   │   └── appsettings.Development.json
-│   ├── JobScraper.Application/
-│   │   ├── Interfaces/
-│   │   ├── Models/
-│   │   ├── Requests/
-│   │   └── Services/
-│   ├── JobScraper.Repository/
-│   │   ├── Data/
-│   │   ├── Migrations/
-│   │   └── Repositories/
-│   └── JobScraper.Scrapers/
-│       ├── HelloWorld/
-│       ├── Infostud/
-│       └── Joberty/
-└── frontend/
-    ├── Dockerfile
-    ├── .dockerignore
-    ├── package.json
-    ├── vite.config.js
-    ├── index.html
-    └── src/
-        ├── App.jsx
-        └── index.css
-
 
 ## API Endpoints
 
