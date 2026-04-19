@@ -2,6 +2,7 @@ using JobScraper.Application.Interfaces;
 using JobScraper.Application.Services;
 using JobScraper.Repository;
 using JobScraper.Scrapers.HelloWorld;
+using JobScraper.Scrapers.Infostud;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IJobService, JobService>();
 //builder.Services.AddScoped<IJobSourceScraper, FakeJobSourceScraper>();
 builder.Services.AddHttpClient<IJobSourceScraper, HelloWorldJobSourceScraper>();
+builder.Services.AddHttpClient<IJobSourceScraper, InfostudJobSourceScraper>();
 builder.Services.AddScoped<IJobImportService, JobImportService>();
 builder.Services.AddRepositoryLayer(builder.Configuration);
 
