@@ -1,4 +1,4 @@
-# JobScraper
+# Job Scraper
 
 JobScraper is a simple job scraping app for searching jobs across multiple websites from one place.
 
