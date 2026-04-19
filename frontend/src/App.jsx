@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import "./index.css";
 
 export default function App() {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
   const [jobs, setJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -16,7 +17,7 @@ export default function App() {
     const beforeIds = new Set(jobs.map((job) => job.id));
 
     try {
-      const response = await fetch("/api/job-imports/run", {
+      const response = await fetch(API_BASE_URL + "/api/job-imports/run", {
         method: "POST"
       });
 
@@ -27,7 +28,7 @@ export default function App() {
       const result = await response.json();
       setImportResult(result);
 
-      const jobsResponse = await fetch("/api/jobs");
+      const jobsResponse = await fetch(API_BASE_URL + "/api/jobs");
       const freshJobs = await jobsResponse.json();
 
       setJobs(freshJobs);
@@ -51,7 +52,7 @@ export default function App() {
     setError("");
 
     try {
-      const response = await fetch("/api/jobs");
+      const response = await fetch(API_BASE_URL + "/api/jobs");
 
       if(!response.ok) {
         throw new Error("Failed to load jobs.");
