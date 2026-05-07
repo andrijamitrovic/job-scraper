@@ -17,14 +17,6 @@ public class JobsController : ControllerBase
         _jobService = jobService;
     }
 
-    [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<JobPosting>>> GetJobs(CancellationToken cancellationToken)
-    {
-        var jobs = await _jobService.GetJobsAsync(cancellationToken);
-
-        return Ok(jobs);
-    }
-
     [HttpPost]
     public async Task<ActionResult<JobPosting>> AddJob(CreateJobPostingRequest request, CancellationToken cancellationToken)
     {
@@ -61,5 +53,16 @@ public class JobsController : ControllerBase
                 id = exception.Id
             });
         }
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<PagedResult<JobPosting>>> GetPagedJobs(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
+    {
+        var jobs = await _jobService.GetPagedAsync(page, pageSize, cancellationToken);
+
+        return Ok(jobs);
     }
 }

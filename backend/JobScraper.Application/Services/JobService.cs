@@ -56,4 +56,11 @@ public class JobService : IJobService
             return job;
         }
     }
+
+    public async Task<PagedResult<JobPosting>> GetPagedAsync(int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var validatedPage = Math.Max(page, 1);
+        var validatedPageSize = Math.Clamp(pageSize, 1, 100);
+        return await _jobPostingRepository.GetPagedAsync(validatedPage, validatedPageSize, cancellationToken);
+    }
 }

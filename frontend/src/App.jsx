@@ -9,6 +9,10 @@ export default function App() {
   const [isImporting, setIsImporting] = useState(false);
   const [importResult, setImportResult] = useState([]);
   const [newJobIds, setNewJobIds] = useState(new Set());
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   async function importJobs() {
     setIsImporting(true);
@@ -18,7 +22,7 @@ export default function App() {
 
     try {
       const response = await fetch(API_BASE_URL + "/api/job-imports/run", {
-        method: "POST"
+        method: "POST",
       });
 
       if (!response.ok) {
@@ -28,16 +32,29 @@ export default function App() {
       const result = await response.json();
       setImportResult(result);
 
-      const jobsResponse = await fetch(API_BASE_URL + "/api/jobs");
-      const freshJobs = await jobsResponse.json();
+      const firstPage = 1;
+      setPage(firstPage);
 
-      setJobs(freshJobs);
+      const jobsResponse = await fetch(
+        `${API_BASE_URL}/api/jobs?page=${firstPage}&pageSize=${pageSize}`,
+      );
+
+      if (!jobsResponse.ok) {
+        throw new Error("Failed to load jobs.");
+      }
+
+      const freshPage = await jobsResponse.json();
+
+      setJobs(freshPage.items);
+      setTotalPages(freshPage.totalPages);
+      setTotalCount(freshPage.totalCount);
+
       setNewJobIds(
         new Set(
-          freshJobs
+          freshPage.items
             .filter((job) => !beforeIds.has(job.id))
-            .map((job) => job.id)
-        )
+            .map((job) => job.id),
+        ),
       );
     } catch (error) {
       setError(error.message);
@@ -46,20 +63,20 @@ export default function App() {
     }
   }
 
-
-  async function loadJobs() {
+  async function loadJobs(pageToLoad = page) {
     setIsLoading(true);
     setError("");
 
     try {
-      const response = await fetch(API_BASE_URL + "/api/jobs");
-
-      if(!response.ok) {
-        throw new Error("Failed to load jobs.");
-      }
+      const response = await fetch(
+        `${API_BASE_URL}/api/jobs?page=${pageToLoad}&pageSize=${pageSize}`,
+      );
 
       const data = await response.json();
-      setJobs(data);
+
+      setJobs(data.items);
+      setTotalPages(data.totalPages);
+      setTotalCount(data.totalCount);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -69,18 +86,17 @@ export default function App() {
 
   useEffect(() => {
     loadJobs();
-  }, [])
+  }, [page]);
 
   return (
     <main className="app">
       <header className="header">
         <h1>Job Scraper</h1>
-        <p>{jobs.length} jobs saved</p>
+        <p>{totalCount} jobs saved</p>
       </header>
       <button onClick={importJobs} disabled={isImporting} className="button">
         {isImporting ? "Importing..." : "Import jobs"}
       </button>
-
 
       {isLoading && <p>Loading jobs...</p>}
 
@@ -90,15 +106,14 @@ export default function App() {
         <section className="import-summary">
           {importResult.map((result) => (
             <div key={result.sourceName}>
-              <strong>{result.sourceName}:  </strong>
-              <span>{result.foundCount} found  </span>
+              <strong>{result.sourceName}: </strong>
+              <span>{result.foundCount} found </span>
               <span>{result.addedCount} added </span>
               <span>{result.skippedDuplicateCount} duplicates</span>
             </div>
           ))}
         </section>
       )}
-
 
       <section className="jobs">
         {jobs.map((job) => (
@@ -118,6 +133,22 @@ export default function App() {
           </article>
         ))}
       </section>
+      <div className="pagination">
+        <button disabled={page === 1} onClick={() => setPage(page - 1)}>
+          Previous
+        </button>
+
+        <span>
+          Page {page} of {totalPages}
+        </span>
+
+        <button
+          disabled={page === totalPages}
+          onClick={() => setPage(page + 1)}
+        >
+          Next
+        </button>
+      </div>
     </main>
   );
 }

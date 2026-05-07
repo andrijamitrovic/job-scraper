@@ -50,3 +50,36 @@ body {
   align-items: center;
   margin-top: 50px;
 }
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem 0 4rem;
+}
+
+.pagination button {
+  background-color: rgb(54, 54, 255);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: rgb(35, 35, 220);
+}
+
+.pagination button:disabled {
+  background-color: #c8c8d8;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  color: #333;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
