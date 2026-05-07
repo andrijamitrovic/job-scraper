@@ -17,14 +17,6 @@ public class JobsController : ControllerBase
         _jobService = jobService;
     }
 
-    [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<JobPosting>>> GetJobs(CancellationToken cancellationToken)
-    {
-        var jobs = await _jobService.GetJobsAsync(cancellationToken);
-
-        return Ok(jobs);
-    }
-
     [HttpPost]
     public async Task<ActionResult<JobPosting>> AddJob(CreateJobPostingRequest request, CancellationToken cancellationToken)
     {

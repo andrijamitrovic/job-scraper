@@ -1,4 +1,5 @@
 using JobScraper.Application.Models;
+using JobScraper.Application.DTOs;
 
 namespace JobScraper.Application.Interfaces;
 

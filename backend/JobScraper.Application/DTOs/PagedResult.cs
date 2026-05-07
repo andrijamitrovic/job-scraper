@@ -1,3 +1,5 @@
+namespace JobScraper.Application.DTOs;
+
 public class PagedResult<T>
 {
     public IReadOnlyList<T> Items { get; set; } = [];

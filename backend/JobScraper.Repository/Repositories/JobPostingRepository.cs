@@ -1,3 +1,4 @@
+using JobScraper.Application.DTOs;
 using JobScraper.Application.Interfaces;
 using JobScraper.Application.Models;
 using JobScraper.Repository.Data;
