@@ -62,4 +62,15 @@ public class JobsController : ControllerBase
             });
         }
     }
+
+    [HttpGet]
+    public async Task<ActionResult<PagedResult<JobPosting>>> GetPagedJobs(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
+    {
+        var jobs = await _jobService.GetPagedAsync(page, pageSize, cancellationToken);
+
+        return Ok(jobs);
+    }
 }

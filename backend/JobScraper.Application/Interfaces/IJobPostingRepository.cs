@@ -11,4 +11,6 @@ public interface IJobPostingRepository
     Task AddAsync(JobPosting jobPosting, CancellationToken cancellationToken);
 
     Task<JobPosting?> GetJobAsync(Guid id, CancellationToken cancellationToken);
+    
+    Task<PagedResult<JobPosting>> GetPagedAsync(int page, int pageSize, CancellationToken cancellationToken);
 }

@@ -38,4 +38,24 @@ public class JobPostingRepository : IJobPostingRepository
     {
         return await _dbContext.JobPostings.FirstOrDefaultAsync(jobPosting => jobPosting.Id == id, cancellationToken);
     }
+
+    public async Task<PagedResult<JobPosting>> GetPagedAsync(int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var totalCount = await _dbContext.JobPostings.CountAsync(cancellationToken);
+
+        var jobs = await _dbContext.JobPostings
+            .OrderByDescending(job => job.ScrapedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return new PagedResult<JobPosting>
+        {
+            Items = jobs,
+            Page = page,
+            PageSize = pageSize,
+            TotalCount = totalCount,
+            TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize)
+        };
+    }
 }
