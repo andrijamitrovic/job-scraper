@@ -45,7 +45,7 @@ public class JobsController : ControllerBase
         {
             var job = await _jobService.GetJobAsync(id, cancellationToken);
 
-            return Ok(job);
+            return Ok(ToJobPostingResponse(job));
         }
         catch (JobNotFoundException exception)
         {
@@ -65,7 +65,14 @@ public class JobsController : ControllerBase
     {
         var jobs = await _jobService.GetPagedAsync(page, pageSize, cancellationToken);
 
-        return Ok(jobs);
+        return Ok(new PagedResult<JobPostingResponse>
+        {
+            Items = jobs.Items.Select(ToJobPostingResponse).ToList(),
+            Page = jobs.Page,
+            PageSize = jobs.PageSize,
+            TotalCount = jobs.TotalCount,
+            TotalPages = jobs.TotalPages
+        });
     }
 
     [HttpGet("{id}/application")]
@@ -80,7 +87,7 @@ public class JobsController : ControllerBase
                 return NotFound();
             }
 
-            return Ok(application);
+            return Ok(ToJobApplicationResponse(application));
         }
         catch (JobNotFoundException exception)
         {
@@ -102,7 +109,7 @@ public class JobsController : ControllerBase
         {
             var application = await _jobApplicationService.UpdateAsync(id, request, cancellationToken);
 
-            return Ok(application);
+            return Ok(ToJobApplicationResponse(application));
         }
         catch (JobNotFoundException exception)
         {
@@ -113,5 +120,37 @@ public class JobsController : ControllerBase
             });
         }
     }
+
+    private static JobPostingResponse ToJobPostingResponse(JobPosting job)
+    {
+        return new JobPostingResponse
+        {
+            Id = job.Id,
+            Source = job.Source,
+            Company = job.Company,
+            Url = job.Url,
+            Title = job.Title,
+            ScrapedAt = job.ScrapedAt,
+            Application = job.Application == null ? null : ToJobApplicationResponse(job.Application)
+        };
+    }
+
+    private static JobApplicationResponse ToJobApplicationResponse(JobApplication application)
+    {
+        return new JobApplicationResponse
+        {
+            Id = application.Id,
+            JobPostingId = application.JobPostingId,
+            Status = application.Status,
+            AppliedAt = application.AppliedAt,
+            InterviewAt = application.InterviewAt,
+            RejectedAt = application.RejectedAt,
+            AppliedHereBefore = application.AppliedHereBefore,
+            Notes = application.Notes,
+            CreatedAt = application.CreatedAt,
+            UpdatedAt = application.UpdatedAt
+        };
+    }
+
 
 }

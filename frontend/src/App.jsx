@@ -63,6 +63,32 @@ export default function App() {
     }
   }
 
+  async function updateApplicationStatus(jobId, status) {
+    const response = await fetch(
+      `${API_BASE_URL}/api/jobs/${jobId}/application`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          status,
+          appliedAt: status === "Applied" ? new Date().toISOString() : null,
+          interviewAt: status === "Interview" ? new Date().toISOString() : null,
+          rejectedAt: status === "Rejected" ? new Date().toISOString() : null,
+          appliedHereBefore: false,
+          notes: "",
+        }),
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to update application status.");
+    }
+
+    await loadJobs(page);
+  }
+
   async function loadJobs(pageToLoad = page) {
     setIsLoading(true);
     setError("");
@@ -130,6 +156,25 @@ export default function App() {
             <a href={job.url} target="_blank" rel="noreferrer">
               Open job
             </a>
+
+            <div className="application-status">
+              <label htmlFor={`application-status-${job.id}`}>Status</label>
+
+              <select
+                id={`application-status-${job.id}`}
+                value={job.application?.status ?? "NotApplied"}
+                onChange={(event) =>
+                  updateApplicationStatus(job.id, event.target.value)
+                }
+              >
+                <option value="NotApplied">Not applied</option>
+                <option value="Applied">Applied</option>
+                <option value="Interview">Interview</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Offer">Offer</option>
+                <option value="Withdrawn">Withdrawn</option>
+              </select>
+            </div>
           </article>
         ))}
       </section>
