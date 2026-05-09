@@ -37,7 +37,9 @@ public class JobPostingRepository : IJobPostingRepository
 
     public async Task<JobPosting?> GetJobAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await _dbContext.JobPostings.FirstOrDefaultAsync(jobPosting => jobPosting.Id == id, cancellationToken);
+        return await _dbContext.JobPostings
+            .Include(jobPosting => jobPosting.Application)
+            .FirstOrDefaultAsync(jobPosting => jobPosting.Id == id, cancellationToken);
     }
 
     public async Task<PagedResult<JobPosting>> GetPagedAsync(int page, int pageSize, CancellationToken cancellationToken)
@@ -45,6 +47,7 @@ public class JobPostingRepository : IJobPostingRepository
         var totalCount = await _dbContext.JobPostings.CountAsync(cancellationToken);
 
         var jobs = await _dbContext.JobPostings
+            .Include(job => job.Application)
             .OrderByDescending(job => job.ScrapedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
