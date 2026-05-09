@@ -14,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IJobService, JobService>();
+builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
 //builder.Services.AddScoped<IJobSourceScraper, FakeJobSourceScraper>();
 builder.Services.AddHttpClient<IJobSourceScraper, HelloWorldJobSourceScraper>();
 builder.Services.AddHttpClient<IJobSourceScraper, InfostudJobSourceScraper>();

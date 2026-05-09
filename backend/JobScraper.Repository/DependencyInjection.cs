@@ -1,4 +1,5 @@
 using JobScraper.Application.Interfaces;
+using JobScraper.Application.Services;
 using JobScraper.Repository.Data;
 using JobScraper.Repository.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ public static class DependencyInjection
             options.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
         
         services.AddScoped<IJobPostingRepository, JobPostingRepository>();
+        services.AddScoped<IJobApplicationRepository, JobApplicationRepository>();
 
         return services;
     }

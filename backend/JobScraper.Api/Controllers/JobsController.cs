@@ -11,10 +11,12 @@ namespace JobScraper.Api.Controllers;
 public class JobsController : ControllerBase
 {
     private readonly IJobService _jobService;
+    private readonly IJobApplicationService _jobApplicationService;
 
-    public JobsController(IJobService jobService)
+    public JobsController(IJobService jobService, IJobApplicationService jobApplicationService)
     {
         _jobService = jobService;
+        _jobApplicationService = jobApplicationService;
     }
 
     [HttpPost]
@@ -65,4 +67,51 @@ public class JobsController : ControllerBase
 
         return Ok(jobs);
     }
+
+    [HttpGet("{id}/application")]
+    public async Task<ActionResult<JobApplication>> GetApplication(Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var application = await _jobApplicationService.GetByJobIdAsync(id, cancellationToken);
+
+            if (application == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(application);
+        }
+        catch (JobNotFoundException exception)
+        {
+            return NotFound(new
+            {
+                message = exception.Message,
+                id = exception.Id
+            });
+        }
+    }
+
+    [HttpPut("{id}/application")]
+    public async Task<ActionResult<JobApplication>> UpdateApplication(
+        Guid id,
+        UpdateJobApplicationRequest request,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var application = await _jobApplicationService.UpdateAsync(id, request, cancellationToken);
+
+            return Ok(application);
+        }
+        catch (JobNotFoundException exception)
+        {
+            return NotFound(new
+            {
+                message = exception.Message,
+                id = exception.Id
+            });
+        }
+    }
+
 }
